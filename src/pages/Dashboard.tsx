@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Activity,
-  Shield,
-  Terminal,
-  Search,
-  AlertTriangle,
-} from "lucide-react";
+import { Activity, Search, AlertTriangle } from "lucide-react";
 import api from "../services/api";
 
 interface Alert {
@@ -16,7 +10,7 @@ interface Alert {
     summary: string;
   };
   message?: string;
-  status?: "pending" | "resolved" | "unresolvable";
+  assigned?: "not_assigned" | "tier_2" | "tier_3";
 }
 
 interface Stats {

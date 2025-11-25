@@ -21,7 +21,7 @@ interface Filters {
   endDate: string;
 }
 
-const Alerts = () => {
+const ActiveAlerts = () => {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -44,13 +44,14 @@ const Alerts = () => {
       const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: "10",
+        assigned: "not_assigned", // Only fetch unassigned alerts
         ...filters,
       });
       const res = await api.get(`/alerts/history?${queryParams}`);
       setAlerts(res.data.alerts);
       setTotalPages(res.data.totalPages);
     } catch (err) {
-      console.error("Failed to fetch alert history", err);
+      console.error("Failed to fetch active alerts", err);
     } finally {
       setLoading(false);
     }
@@ -59,6 +60,17 @@ const Alerts = () => {
   useEffect(() => {
     fetchAlerts();
   }, [page, filters]);
+
+  const handleAssignment = async (id: string) => {
+    try {
+      await api.put(`/alerts/${id}`, { assigned: "tier_2" });
+      // Remove the assigned alert from the list
+      setAlerts(alerts.filter((alert) => alert._id !== id));
+    } catch (err) {
+      console.error("Failed to assign alert", err);
+      alert("Failed to assign alert");
+    }
+  };
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -83,7 +95,7 @@ const Alerts = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h2 className="text-2xl font-bold text-white">Alert History</h2>
+        <h2 className="text-2xl font-bold text-white">Active Alerts</h2>
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 bg-gray-800 p-2 rounded-lg border border-gray-700">
@@ -141,8 +153,8 @@ const Alerts = () => {
                 <th className="px-6 py-4">Severity</th>
                 <th className="px-6 py-4">Summary</th>
                 <th className="px-6 py-4">IP Address</th>
-                <th className="px-6 py-4">Assigned</th>
                 <th className="px-6 py-4">Timestamp</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -161,7 +173,7 @@ const Alerts = () => {
                     colSpan={5}
                     className="px-6 py-8 text-center text-gray-500"
                   >
-                    No alerts found.
+                    No active alerts found.
                   </td>
                 </tr>
               ) : (
@@ -189,19 +201,16 @@ const Alerts = () => {
                     <td className="px-6 py-4 text-gray-400 font-mono text-sm">
                       {alert.rawLog?.ip}
                     </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                          alert.assigned === "not_assigned"
-                            ? "bg-gray-500/10 text-gray-400"
-                            : "bg-purple-500/10 text-purple-400"
-                        }`}
-                      >
-                        {alert.assigned.replace("_", " ")}
-                      </span>
-                    </td>
                     <td className="px-6 py-4 text-gray-500 text-sm">
                       {new Date(alert.timestamp).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleAssignment(alert._id)}
+                        className="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-xs font-medium"
+                      >
+                        Assign Tier 2
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -237,4 +246,4 @@ const Alerts = () => {
   );
 };
 
-export default Alerts;
+export default ActiveAlerts;

@@ -51,6 +51,17 @@ const Layout = () => {
             <span>Dashboard</span>
           </Link>
           <Link
+            to="/active-alerts"
+            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+              isActive("/active-alerts")
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+            }`}
+          >
+            <Bell className="w-5 h-5" />
+            <span>Active Alerts</span>
+          </Link>
+          <Link
             to="/alerts"
             className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
               isActive("/alerts")
@@ -58,8 +69,8 @@ const Layout = () => {
                 : "text-gray-400 hover:bg-gray-800 hover:text-white"
             }`}
           >
-            <Bell className="w-5 h-5" />
-            <span>Alerts History</span>
+            <Shield className="w-5 h-5" />
+            <span>Alert History</span>
           </Link>
           <Link
             to="/users"
@@ -90,7 +101,8 @@ const Layout = () => {
         <header className="h-16 border-b border-gray-800 bg-gray-900/50 backdrop-blur-md sticky top-0 z-50 px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">
             {isActive("/") && "Dashboard"}
-            {isActive("/alerts") && "Alerts History"}
+            {isActive("/active-alerts") && "Active Alerts"}
+            {isActive("/alerts") && "Alert History"}
             {isActive("/users") && "User Management"}
           </h1>
           <div className="flex items-center space-x-2">
