@@ -5,16 +5,32 @@ import {
   Terminal,
   Search,
   AlertTriangle,
-  CheckCircle,
 } from "lucide-react";
 import api from "../services/api";
+
+interface Alert {
+  _id: string;
+  timestamp: string;
+  aiAnalysis: {
+    severity: "High" | "Medium" | "Low";
+    summary: string;
+  };
+  message?: string;
+}
+
+interface Stats {
+  High: number;
+  Medium: number;
+  Low: number;
+  [key: string]: number;
+}
 
 const Dashboard = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const [alerts, setAlerts] = useState([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
 
-  const [stats, setStats] = useState({ High: 0, Medium: 0, Low: 0 });
+  const [stats, setStats] = useState<Stats>({ High: 0, Medium: 0, Low: 0 });
 
   const fetchLatestAlerts = async () => {
     try {
@@ -164,7 +180,7 @@ const Dashboard = () => {
             <div className="divide-y divide-gray-800">
               {alerts.map((alert) => (
                 <div
-                  key={alert._id || alert.id}
+                  key={alert._id}
                   className="p-4 flex items-start space-x-4 hover:bg-gray-800/50 transition-colors"
                 >
                   <div className="mt-1">
@@ -204,7 +220,14 @@ const Dashboard = () => {
   );
 };
 
-function StatusCard({ icon, label, value, color }) {
+interface StatusCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  color: string;
+}
+
+function StatusCard({ icon, label, value, color }: StatusCardProps) {
   return (
     <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 flex items-center space-x-4">
       <div className={`p-3 rounded-lg bg-gray-700/50 ${color}`}>{icon}</div>

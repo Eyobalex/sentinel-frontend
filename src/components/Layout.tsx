@@ -8,7 +8,7 @@ const Layout = () => {
   const { logout } = useAuth();
   const location = useLocation();
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path;
 
   const [isSystemOnline, setIsSystemOnline] = useState(false);
 

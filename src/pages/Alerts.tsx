@@ -1,24 +1,37 @@
 import { useState, useEffect } from "react";
-import {
-  AlertTriangle,
-  Activity,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import api from "../services/api";
 
+interface Alert {
+  _id: string;
+  timestamp: string;
+  aiAnalysis: {
+    severity: "High" | "Medium" | "Low";
+    summary: string;
+  };
+  rawLog: {
+    ip: string;
+  };
+}
+
+interface Filters {
+  severity: string;
+  startDate: string;
+  endDate: string;
+}
+
 const Alerts = () => {
-  const [alerts, setAlerts] = useState([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     severity: "",
     startDate: "",
     endDate: "",
   });
-  const [tempFilters, setTempFilters] = useState({
+  const [tempFilters, setTempFilters] = useState<Filters>({
     severity: "",
     startDate: "",
     endDate: "",
@@ -28,8 +41,8 @@ const Alerts = () => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams({
-        page,
-        limit: 10,
+        page: page.toString(),
+        limit: "10",
         ...filters,
       });
       const res = await api.get(`/alerts/history?${queryParams}`);
@@ -46,7 +59,9 @@ const Alerts = () => {
     fetchAlerts();
   }, [page, filters]);
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setTempFilters({ ...tempFilters, [e.target.name]: e.target.value });
   };
 
@@ -132,7 +147,7 @@ const Alerts = () => {
               {loading ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan={4}
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     Loading...
@@ -141,7 +156,7 @@ const Alerts = () => {
               ) : alerts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan={4}
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     No alerts found.

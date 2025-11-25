@@ -2,8 +2,14 @@ import { useState, useEffect } from "react";
 import { Trash2, UserPlus, User } from "lucide-react";
 import api from "../services/api";
 
+interface UserType {
+  _id: string;
+  username: string;
+  email: string;
+}
+
 const Users = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
   const [newUser, setNewUser] = useState({
     username: "",
@@ -27,7 +33,7 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       await api.delete(`/users/${id}`);
@@ -37,7 +43,7 @@ const Users = () => {
     }
   };
 
-  const handleCreate = async (e) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await api.post("/users", newUser);

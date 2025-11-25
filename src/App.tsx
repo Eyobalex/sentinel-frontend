@@ -10,8 +10,9 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Alerts from "./pages/Alerts";
 import Users from "./pages/Users";
+import { ReactNode } from "react";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading)
@@ -21,7 +22,7 @@ const PrivateRoute = ({ children }) => {
       </div>
     );
 
-  return user ? children : <Navigate to="/login" />;
+  return user ? <>{children}</> : <Navigate to="/login" />;
 };
 
 function App() {
