@@ -10,7 +10,7 @@ interface Alert {
     summary: string;
   };
   message?: string;
-  assigned?: "not_assigned" | "tier_2" | "tier_3";
+  assigned?: "not_assigned" | "tier_2" | "tier_3" | "no_need";
 }
 
 interface Stats {

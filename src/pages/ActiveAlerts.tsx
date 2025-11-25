@@ -12,7 +12,7 @@ interface Alert {
   rawLog: {
     ip: string;
   };
-  assigned: "not_assigned" | "tier_2" | "tier_3";
+  assigned: "not_assigned" | "tier_2" | "tier_3" | "no_need";
 }
 
 interface Filters {
@@ -209,7 +209,7 @@ const ActiveAlerts = () => {
                         onClick={() => handleAssignment(alert._id)}
                         className="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-xs font-medium"
                       >
-                        Assign Tier 2
+                        Assign to Tier 2
                       </button>
                     </td>
                   </tr>
