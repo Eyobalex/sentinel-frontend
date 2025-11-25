@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from "lucide-react";
 import api from "../services/api";
 
 interface Alert {
@@ -12,6 +12,7 @@ interface Alert {
   rawLog: {
     ip: string;
   };
+  status: "pending" | "resolved" | "unresolvable";
 }
 
 interface Filters {
@@ -58,6 +59,23 @@ const Alerts = () => {
   useEffect(() => {
     fetchAlerts();
   }, [page, filters]);
+
+  const handleStatusUpdate = async (
+    id: string,
+    newStatus: "resolved" | "unresolvable"
+  ) => {
+    try {
+      await api.put(`/alerts/${id}`, { status: newStatus });
+      setAlerts(
+        alerts.map((alert) =>
+          alert._id === id ? { ...alert, status: newStatus } : alert
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update alert status", err);
+      alert("Failed to update status");
+    }
+  };
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -140,14 +158,16 @@ const Alerts = () => {
                 <th className="px-6 py-4">Severity</th>
                 <th className="px-6 py-4">Summary</th>
                 <th className="px-6 py-4">IP Address</th>
+                <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Timestamp</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
               {loading ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={6}
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     Loading...
@@ -156,7 +176,7 @@ const Alerts = () => {
               ) : alerts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={6}
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     No alerts found.
@@ -187,8 +207,45 @@ const Alerts = () => {
                     <td className="px-6 py-4 text-gray-400 font-mono text-sm">
                       {alert.rawLog?.ip}
                     </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                          alert.status === "resolved"
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : alert.status === "unresolvable"
+                            ? "bg-gray-500/10 text-gray-400"
+                            : "bg-amber-500/10 text-amber-400"
+                        }`}
+                      >
+                        {alert.status}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-gray-500 text-sm">
                       {new Date(alert.timestamp).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {alert.status === "pending" && (
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            onClick={() =>
+                              handleStatusUpdate(alert._id, "resolved")
+                            }
+                            className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                            title="Resolve"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleStatusUpdate(alert._id, "unresolvable")
+                            }
+                            className="p-1.5 rounded-lg bg-gray-500/10 text-gray-400 hover:bg-gray-500/20 transition-colors"
+                            title="Mark Unresolvable"
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

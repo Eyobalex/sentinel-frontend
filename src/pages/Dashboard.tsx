@@ -16,6 +16,7 @@ interface Alert {
     summary: string;
   };
   message?: string;
+  status?: "pending" | "resolved" | "unresolvable";
 }
 
 interface Stats {
