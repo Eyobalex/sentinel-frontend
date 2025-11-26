@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Trash2, UserPlus, User } from "lucide-react";
+import { Trash2, UserPlus, User, Loader } from "lucide-react";
 import api from "../services/api";
 
 interface UserType {
@@ -17,6 +17,8 @@ const Users = () => {
     password: "",
   });
   const [showForm, setShowForm] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -45,6 +47,27 @@ const Users = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError("");
+    setIsCreating(true);
+
+    if (newUser.username.length < 3) {
+      setCreateError("Username must be at least 3 characters");
+      setIsCreating(false);
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(newUser.email)) {
+      setCreateError("Please enter a valid email address");
+      setIsCreating(false);
+      return;
+    }
+
+    if (newUser.password.length < 6) {
+      setCreateError("Password must be at least 6 characters");
+      setIsCreating(false);
+      return;
+    }
+
     try {
       const res = await api.post("/users", newUser);
       setUsers([...users, res.data]);
@@ -52,7 +75,11 @@ const Users = () => {
       setShowForm(false);
     } catch (err) {
       console.error("Failed to create user", err);
-      alert("Failed to create user");
+      setCreateError(
+        "Failed to create user. Email or username might be taken."
+      );
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -74,6 +101,11 @@ const Users = () => {
           <h3 className="text-lg font-semibold text-white mb-4">
             Create New User
           </h3>
+          {createError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg text-sm">
+              {createError}
+            </div>
+          )}
           <form
             onSubmit={handleCreate}
             className="grid grid-cols-1 md:grid-cols-3 gap-4"
@@ -118,9 +150,17 @@ const Users = () => {
               </button>
               <button
                 type="submit"
-                className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg"
+                disabled={isCreating}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create
+                {isCreating ? (
+                  <>
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create"
+                )}
               </button>
             </div>
           </form>

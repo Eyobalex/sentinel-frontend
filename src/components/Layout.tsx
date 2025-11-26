@@ -1,5 +1,12 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Shield, LayoutDashboard, Bell, Users, LogOut } from "lucide-react";
+import {
+  Shield,
+  LayoutDashboard,
+  Bell,
+  Users,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import api from "../services/api";
@@ -83,6 +90,17 @@ const Layout = () => {
             <Users className="w-5 h-5" />
             <span>User Management</span>
           </Link>
+          <Link
+            to="/settings"
+            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+              isActive("/settings")
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+            }`}
+          >
+            <Settings className="w-5 h-5" />
+            <span>Settings</span>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-gray-800">
@@ -101,9 +119,11 @@ const Layout = () => {
         <header className="h-16 border-b border-gray-800 bg-gray-900/50 backdrop-blur-md sticky top-0 z-50 px-8 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">
             {isActive("/") && "Dashboard"}
-            {isActive("/active-alerts") && "Active Alerts"}
+            {location.pathname === "/active-alerts" && "Active Alerts"}
+            {location.pathname === "/settings" && "Settings"}
             {isActive("/alerts") && "Alert History"}
             {isActive("/users") && "User Management"}
+            {isActive("/settings") && "Settings"}
           </h1>
           <div className="flex items-center space-x-2">
             <div

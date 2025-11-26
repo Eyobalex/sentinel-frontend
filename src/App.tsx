@@ -9,6 +9,7 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ActiveAlerts from "./pages/ActiveAlerts";
+import Settings from "./pages/Settings";
 import Alerts from "./pages/Alerts";
 import Users from "./pages/Users";
 import { ReactNode } from "react";
@@ -43,6 +44,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="active-alerts" element={<ActiveAlerts />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="alerts" element={<Alerts />} />
             <Route path="users" element={<Users />} />
           </Route>
