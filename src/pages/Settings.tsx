@@ -177,6 +177,7 @@ const Settings: React.FC = () => {
                   onChange={handleChange}
                   className="block w-full pl-10 bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 text-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none"
                 >
+                  <option value="* * * * *">Every minute</option>
                   <option value="0 * * * *">Every hour</option>
                   <option value="0 */3 * * *">Every 3 hours</option>
                   <option value="0 */6 * * *">Every 6 hours</option>

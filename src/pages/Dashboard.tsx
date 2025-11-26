@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Activity, Search, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  Activity,
+  Search,
+  AlertTriangle,
+  Settings,
+  ArrowRight,
+} from "lucide-react";
 import api from "../services/api";
 
 interface Alert {
@@ -89,6 +96,31 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
+      {/* Settings Banner */}
+      <div className="bg-linear-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 rounded-xl p-6 flex items-center justify-between backdrop-blur-sm">
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-blue-500/20 rounded-lg">
+            <Settings className="w-6 h-6 text-blue-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              Dynamic Configuration Available
+            </h3>
+            <p className="text-blue-200/80 text-sm">
+              New! You can now configure alert emails and cron schedules
+              dynamically.
+            </p>
+          </div>
+        </div>
+        <Link
+          to="/settings"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors flex items-center"
+        >
+          Go to Settings
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Link>
+      </div>
+
       {/* Status Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatusCard
